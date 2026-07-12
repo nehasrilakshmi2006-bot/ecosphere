@@ -25,6 +25,7 @@
         'views/res_config_settings_views.xml',
         'wizards/esg_report_wizard_views.xml',
     ],
+    
     'assets': {
         'web.assets_backend': [
             'ecosphere_esg/static/src/js/esg_dashboard.js',
