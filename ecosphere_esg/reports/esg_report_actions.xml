@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_esg_summary" model="ir.actions.report">
+        <field name="name">ESG Summary Report</field>
+        <field name="model">esg.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ecosphere_esg.report_esg_summary</field>
+        <field name="report_file">ecosphere_esg.report_esg_summary</field>
+        <field name="print_report_name">'ESG_Report_%s' % (object.date_end or '')</field>
+        <field name="binding_model_id" ref="model_esg_report_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_esg_summary">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="wizard">
+                <t t-set="report_lines" t-value="wizard._get_report_lines()"/>
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold text-primary">EcoSphere ESG Report</h2>
+                            <p class="text-muted">Custom Report Builder Output</p>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2">Applied Filters</h4>
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td class="fw-bold" style="width: 25%;">Department</td>
+                                        <td><t t-esc="wizard.department_id.name or 'All'"/></td>
+                                        <td class="fw-bold" style="width: 25%;">Module</td>
+                                        <td>
+                                            <t t-if="wizard.module == 'environmental'">Environmental</t>
+                                            <t t-elif="wizard.module == 'social'">Social</t>
+                                            <t t-elif="wizard.module == 'governance'">Governance</t>
+                                            <t t-else="">All Modules</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Date Range</td>
+                                        <td>
+                                            <t t-esc="wizard.date_start or '—'"/>
+                                            to
+                                            <t t-esc="wizard.date_end or '—'"/>
+                                        </td>
+                                        <td class="fw-bold">Employee</td>
+                                        <td><t t-esc="wizard.employee_id.name or 'All'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Challenge</td>
+                                        <td><t t-esc="wizard.challenge_id.name or 'All'"/></td>
+                                        <td class="fw-bold">ESG Category</td>
+                                        <td><t t-esc="wizard.category_id.name or 'All'"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <h4 class="border-bottom pb-2 mb-3">
+                            Report Data
+                            <span class="badge bg-secondary ms-2">
+                                <t t-esc="len(report_lines)"/> records
+                            </span>
+                        </h4>
+
+                        <table class="table table-sm table-striped o_main_table">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th>Module</th>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Department</th>
+                                    <th>Employee</th>
+                                    <th>Category</th>
+                                    <th class="text-end">Value</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="report_lines" t-as="line">
+                                    <tr>
+                                        <td><t t-esc="line.get('module', '')"/></td>
+                                        <td><t t-esc="line.get('name', '')"/></td>
+                                        <td><t t-esc="line.get('date', '') or '—'"/></td>
+                                        <td><t t-esc="line.get('department', '') or '—'"/></td>
+                                        <td><t t-esc="line.get('employee', '') or '—'"/></td>
+                                        <td><t t-esc="line.get('category', '') or '—'"/></td>
+                                        <td class="text-end">
+                                            <t t-if="line.get('module') == 'Environmental'">
+                                                <t t-esc="'%.2f' % line.get('value', 0.0)"/>
+                                            </t>
+                                            <t t-elif="line.get('module') == 'Social' and line.get('category') == 'Department Score'">
+                                                <t t-esc="'%.1f' % line.get('value', 0.0)"/>
+                                            </t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                        <td><t t-esc="line.get('details', '')"/></td>
+                                    </tr>
+                                </t>
+                                <t t-if="not report_lines">
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">
+                                            No records match the selected filters.
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row mt-4">
+                            <div class="col-12 col-md-6">
+                                <p class="text-muted small">
+                                    Generated by EcoSphere ESG Management Platform
+                                </p>
+                            </div>
+                            <div class="col-12 col-md-6 text-end">
+                                <p class="text-muted small">
+                                    Report ID: ESG-<t t-esc="wizard.id"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

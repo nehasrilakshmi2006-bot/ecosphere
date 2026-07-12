@@ -6,3 +6,9 @@ access_esg_department_user,esg.department.user,model_esg_department,base.group_u
 access_esg_asset_user,esg.asset.user,model_esg_asset,base.group_user,1,1,1,1
 access_esg_asset_booking_user,esg.asset.booking.user,model_esg_asset_booking,base.group_user,1,1,1,1
 access_esg_dashboard_user,esg.dashboard.user,model_esg_dashboard,base.group_user,1,1,1,1
+access_esg_category_user,esg.category.user,model_esg_category,base.group_user,1,1,1,1
+access_esg_challenge_user,esg.challenge.user,model_esg_challenge,base.group_user,1,1,1,1
+access_esg_report_wizard_user,esg.report.wizard.user,model_esg_report_wizard,base.group_user,1,1,1,1
+access_esg_csr_activity_user,esg.csr.activity.user,model_esg_csr_activity,base.group_user,1,1,1,1
+access_esg_badge_user,esg.badge.user,model_esg_badge,base.group_user,1,1,1,1
+access_esg_policy_acknowledgement_user,esg.policy.acknowledgement.user,model_esg_policy_acknowledgement,base.group_user,1,1,1,1

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_ecosphere" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ecosphere</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="EcoSphere ESG" name="ecosphere_esg" groups="base.group_system">
+                    <block title="Automated Notification Engine" name="esg_notification_settings">
+                        <setting string="Notify on New Compliance Issue"
+                                 help="Send an in-app notification to the assigned owner when a new compliance issue is created.">
+                            <field name="esg_notify_compliance_issue"/>
+                        </setting>
+                        <setting string="Notify on CSR/Challenge Approvals"
+                                 help="Notify employees when their CSR activity or challenge is approved or rejected.">
+                            <field name="esg_notify_csr_challenge_approval"/>
+                        </setting>
+                        <setting string="Policy Acknowledgement Reminders"
+                                 help="Automatically schedule activity reminders for overdue policy acknowledgements.">
+                            <field name="esg_notify_policy_acknowledgement"/>
+                        </setting>
+                        <setting string="Badge Unlocks"
+                                 help="Send a celebration notification when an employee unlocks a badge.">
+                            <field name="esg_notify_badge_unlock"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

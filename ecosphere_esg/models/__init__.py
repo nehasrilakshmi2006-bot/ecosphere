@@ -2,3 +2,9 @@ from . import esg_models
 from . import department_score
 from . import asset_models
 from . import dashboard_models
+from . import challenge_models
+from . import compliance
+from . import csr_activity
+from . import badge
+from . import policy_acknowledgement
+from . import res_config_settings

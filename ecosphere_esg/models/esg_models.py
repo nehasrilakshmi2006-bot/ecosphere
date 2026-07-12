@@ -41,20 +41,4 @@ class EsgCarbonTransaction(models.Model):
             record.total_emissions = record.activity_amount * carbon_value
 
 
-class EsgComplianceIssue(models.Model):
-    _name = 'esg.compliance.issue'
-    _description = 'ESG Compliance Issue'
 
-    name = fields.Char(required=True)
-    description = fields.Text()
-    owner_id = fields.Many2one('res.users', string='Owner')
-    due_date = fields.Date(string='Due Date')
-    status = fields.Selection(
-        selection=[
-            ('open', 'Open'),
-            ('resolved', 'Resolved'),
-            ('overdue', 'Overdue'),
-        ],
-        string='Status',
-        default='open',
-    )

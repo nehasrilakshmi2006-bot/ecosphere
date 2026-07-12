@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Compliance Issue: add chatter -->
+    <record id="view_esg_compliance_issue_form_inherit_mail" model="ir.ui.view">
+        <field name="name">esg.compliance.issue.form.inherit.mail</field>
+        <field name="model">esg.compliance.issue</field>
+        <field name="inherit_id" ref="view_esg_compliance_issue_form"/>
+        <field name="arch" type="xml">
+            <sheet position="after">
+                <chatter/>
+            </sheet>
+        </field>
+    </record>
+
+    <!-- CSR Activity Views -->
+    <record id="view_esg_csr_activity_list" model="ir.ui.view">
+        <field name="name">esg.csr.activity.list</field>
+        <field name="model">esg.csr.activity</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="approval_state" widget="badge"
+                       decoration-success="approval_state == 'approved'"
+                       decoration-danger="approval_state == 'rejected'"
+                       decoration-info="approval_state == 'submitted'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_esg_csr_activity_form" model="ir.ui.view">
+        <field name="name">esg.csr.activity.form</field>
+        <field name="model">esg.csr.activity</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" string="Submit" type="object"
+                            class="btn-primary" invisible="approval_state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object"
+                            class="btn-primary" invisible="approval_state != 'submitted'"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            invisible="approval_state != 'submitted'"/>
+                    <field name="approval_state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,rejected"/>
+                </header>
+                <sheet>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <group>
+                                <field name="name"/>
+                                <field name="employee_id"/>
+                                <field name="department_id"/>
+                            </group>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <group>
+                                <field name="description"/>
+                            </group>
+                        </div>
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_csr_activity" model="ir.actions.act_window">
+        <field name="name">CSR Activities</field>
+        <field name="res_model">esg.csr.activity</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Challenge: add approval header + chatter -->
+    <record id="view_esg_challenge_list" model="ir.ui.view">
+        <field name="name">esg.challenge.list</field>
+        <field name="model">esg.challenge</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="module"/>
+                <field name="approval_state" widget="badge"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_esg_challenge_form" model="ir.ui.view">
+        <field name="name">esg.challenge.form</field>
+        <field name="model">esg.challenge</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" string="Submit" type="object"
+                            class="btn-primary" invisible="approval_state != 'draft'"/>
+                    <button name="action_approve" string="Approve" type="object"
+                            class="btn-primary" invisible="approval_state != 'submitted'"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            invisible="approval_state != 'submitted'"/>
+                    <field name="approval_state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,rejected"/>
+                </header>
+                <sheet>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <group>
+                                <field name="name"/>
+                                <field name="employee_id"/>
+                                <field name="department_id"/>
+                                <field name="category_id"/>
+                            </group>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <group>
+                                <field name="module"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="status"/>
+                            </group>
+                        </div>
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_challenge" model="ir.actions.act_window">
+        <field name="name">Challenges</field>
+        <field name="res_model">esg.challenge</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Badge Views -->
+    <record id="view_esg_badge_list" model="ir.ui.view">
+        <field name="name">esg.badge.list</field>
+        <field name="model">esg.badge</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="points"/>
+                <field name="is_unlocked" widget="boolean_toggle"/>
+                <field name="unlock_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_esg_badge_form" model="ir.ui.view">
+        <field name="name">esg.badge.form</field>
+        <field name="model">esg.badge</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_unlock_badge" string="Unlock Badge" type="object"
+                            class="btn-primary" invisible="is_unlocked"/>
+                </header>
+                <sheet>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <group>
+                                <field name="name"/>
+                                <field name="employee_id"/>
+                                <field name="points"/>
+                            </group>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <group>
+                                <field name="is_unlocked"/>
+                                <field name="unlock_date"/>
+                                <field name="description"/>
+                            </group>
+                        </div>
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_badge" model="ir.actions.act_window">
+        <field name="name">Employee Badges</field>
+        <field name="res_model">esg.badge</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Policy Acknowledgement Views -->
+    <record id="view_esg_policy_acknowledgement_list" model="ir.ui.view">
+        <field name="name">esg.policy.acknowledgement.list</field>
+        <field name="model">esg.policy.acknowledgement</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="due_date"/>
+                <field name="acknowledged" widget="boolean_toggle"/>
+                <field name="acknowledged_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_esg_policy_acknowledgement_form" model="ir.ui.view">
+        <field name="name">esg.policy.acknowledgement.form</field>
+        <field name="model">esg.policy.acknowledgement</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_acknowledge" string="Acknowledge" type="object"
+                            class="btn-primary" invisible="acknowledged"/>
+                </header>
+                <sheet>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <group>
+                                <field name="name"/>
+                                <field name="employee_id"/>
+                            </group>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <group>
+                                <field name="due_date"/>
+                                <field name="acknowledged"/>
+                                <field name="acknowledged_date"/>
+                            </group>
+                        </div>
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_policy_acknowledgement" model="ir.actions.act_window">
+        <field name="name">Policy Acknowledgements</field>
+        <field name="res_model">esg.policy.acknowledgement</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem
+        id="menu_esg_csr_activity"
+        name="CSR Activities"
+        parent="menu_ecosphere_root"
+        action="action_esg_csr_activity"
+        sequence="25"/>
+
+    <menuitem
+        id="menu_esg_challenge"
+        name="Challenges"
+        parent="menu_ecosphere_root"
+        action="action_esg_challenge"
+        sequence="26"/>
+
+    <menuitem
+        id="menu_esg_badge"
+        name="Employee Badges"
+        parent="menu_ecosphere_root"
+        action="action_esg_badge"
+        sequence="55"/>
+
+    <menuitem
+        id="menu_esg_policy_acknowledgement"
+        name="Policy Acknowledgements"
+        parent="menu_ecosphere_root"
+        action="action_esg_policy_acknowledgement"
+        sequence="56"/>
+
+</odoo>

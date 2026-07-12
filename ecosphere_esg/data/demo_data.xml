@@ -135,4 +135,88 @@
         <field name="state">returned</field>
     </record>
 
+    <!-- ESG Categories -->
+    <record id="category_carbon_reduction" model="esg.category">
+        <field name="name">Carbon Reduction</field>
+        <field name="description">Initiatives focused on lowering carbon footprint.</field>
+    </record>
+    <record id="category_csr_engagement" model="esg.category">
+        <field name="name">CSR Engagement</field>
+        <field name="description">Corporate social responsibility programs.</field>
+    </record>
+    <record id="category_compliance" model="esg.category">
+        <field name="name">Regulatory Compliance</field>
+        <field name="description">Governance and regulatory adherence.</field>
+    </record>
+
+    <!-- ESG Challenges -->
+    <record id="challenge_green_commute" model="esg.challenge">
+        <field name="name">30-Day Green Commute</field>
+        <field name="department_id" ref="department_hr"/>
+        <field name="category_id" ref="category_csr_engagement"/>
+        <field name="module">social</field>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-03-31</field>
+        <field name="status">active</field>
+    </record>
+    <record id="challenge_zero_waste" model="esg.challenge">
+        <field name="name">Zero Waste Week</field>
+        <field name="department_id" ref="department_operations"/>
+        <field name="category_id" ref="category_carbon_reduction"/>
+        <field name="module">environmental</field>
+        <field name="start_date">2026-02-01</field>
+        <field name="end_date">2026-02-28</field>
+        <field name="status">completed</field>
+    </record>
+    <record id="challenge_audit_readiness" model="esg.challenge">
+        <field name="name">ISO 14001 Audit Readiness</field>
+        <field name="department_id" ref="department_finance"/>
+        <field name="category_id" ref="category_compliance"/>
+        <field name="module">governance</field>
+        <field name="start_date">2026-03-01</field>
+        <field name="end_date">2026-06-30</field>
+        <field name="status">active</field>
+        <field name="approval_state">submitted</field>
+    </record>
+
+    <!-- CSR Activities -->
+    <record id="csr_volunteer_day" model="esg.csr.activity">
+        <field name="name">Community Volunteer Day</field>
+        <field name="employee_id" ref="base.user_admin"/>
+        <field name="department_id" ref="department_hr"/>
+        <field name="description">Annual team volunteer event at local shelter.</field>
+        <field name="approval_state">submitted</field>
+    </record>
+
+    <!-- Employee Badges -->
+    <record id="badge_eco_pioneer" model="esg.badge">
+        <field name="name">Eco Pioneer</field>
+        <field name="employee_id" ref="base.user_admin"/>
+        <field name="description">Awarded for outstanding environmental contributions.</field>
+        <field name="points">850</field>
+        <field name="is_unlocked">False</field>
+    </record>
+    <record id="badge_compliance_champion" model="esg.badge">
+        <field name="name">Compliance Champion</field>
+        <field name="employee_id" ref="base.user_admin"/>
+        <field name="description">Recognized for governance excellence.</field>
+        <field name="points">720</field>
+        <field name="is_unlocked">True</field>
+        <field name="unlock_date">2026-02-01</field>
+    </record>
+
+    <!-- Policy Acknowledgements -->
+    <record id="policy_code_of_conduct" model="esg.policy.acknowledgement">
+        <field name="name">Code of Conduct 2026</field>
+        <field name="employee_id" ref="base.user_admin"/>
+        <field name="due_date">2026-01-31</field>
+        <field name="acknowledged">False</field>
+    </record>
+    <record id="policy_sustainability" model="esg.policy.acknowledgement">
+        <field name="name">Sustainability Policy</field>
+        <field name="employee_id" ref="base.user_admin"/>
+        <field name="due_date">2026-06-30</field>
+        <field name="acknowledged">False</field>
+    </record>
+
 </odoo>

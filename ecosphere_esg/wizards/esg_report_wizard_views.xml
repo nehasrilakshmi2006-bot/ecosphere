@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_esg_report_wizard_form" model="ir.ui.view">
+        <field name="name">esg.report.wizard.form</field>
+        <field name="model">esg.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="ESG Report Builder">
+                <group>
+                    <group string="Filters">
+                        <field name="department_id" options="{'no_create': True}"/>
+                        <field name="module"/>
+                        <field name="employee_id" options="{'no_create': True}"/>
+                        <field name="challenge_id" options="{'no_create': True}"/>
+                        <field name="category_id" options="{'no_create': True}"/>
+                    </group>
+                    <group string="Date Range">
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate_pdf" string="Generate PDF" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button name="action_export_excel" string="Export to Excel" type="object" class="btn-secondary" data-hotkey="e"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_report_wizard" model="ir.actions.act_window">
+        <field name="name">Report Builder</field>
+        <field name="res_model">esg.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+        id="menu_esg_report_builder"
+        name="Report Builder"
+        parent="menu_ecosphere_root"
+        action="action_esg_report_wizard"
+        sequence="50"/>
+
+</odoo>
