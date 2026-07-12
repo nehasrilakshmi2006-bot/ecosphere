@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_esg_emission_factor_user,esg.emission.factor.user,model_esg_emission_factor,base.group_user,1,1,1,1
+access_esg_carbon_transaction_user,esg.carbon.transaction.user,model_esg_carbon_transaction,base.group_user,1,1,1,1
+access_esg_compliance_issue_user,esg.compliance.issue.user,model_esg_compliance_issue,base.group_user,1,1,1,1
+access_esg_department_user,esg.department.user,model_esg_department,base.group_user,1,1,1,1
+access_esg_asset_user,esg.asset.user,model_esg_asset,base.group_user,1,1,1,1
+access_esg_asset_booking_user,esg.asset.booking.user,model_esg_asset_booking,base.group_user,1,1,1,1
+access_esg_dashboard_user,esg.dashboard.user,model_esg_dashboard,base.group_user,1,1,1,1

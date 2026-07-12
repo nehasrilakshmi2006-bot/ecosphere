@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Singleton dashboard record -->
+    <record id="esg_dashboard_default" model="esg.dashboard">
+        <field name="name">ESG Smart Dashboard</field>
+    </record>
+
+    <!-- Departments -->
+    <record id="department_operations" model="esg.department">
+        <field name="name">Operations</field>
+        <field name="environmental_score">82</field>
+        <field name="social_score">74</field>
+        <field name="governance_score">88</field>
+    </record>
+    <record id="department_engineering" model="esg.department">
+        <field name="name">Engineering</field>
+        <field name="environmental_score">91</field>
+        <field name="social_score">79</field>
+        <field name="governance_score">85</field>
+    </record>
+    <record id="department_hr" model="esg.department">
+        <field name="name">Human Resources</field>
+        <field name="environmental_score">68</field>
+        <field name="social_score">95</field>
+        <field name="governance_score">80</field>
+    </record>
+    <record id="department_finance" model="esg.department">
+        <field name="name">Finance</field>
+        <field name="environmental_score">72</field>
+        <field name="social_score">70</field>
+        <field name="governance_score">92</field>
+    </record>
+
+    <!-- Emission Factors (if not already present) -->
+    <record id="factor_fleet_fuel" model="esg.emission.factor">
+        <field name="name">Fleet Fuel</field>
+        <field name="carbon_value">2.31</field>
+    </record>
+    <record id="factor_manufacturing" model="esg.emission.factor">
+        <field name="name">Manufacturing</field>
+        <field name="carbon_value">0.85</field>
+    </record>
+    <record id="factor_electricity" model="esg.emission.factor">
+        <field name="name">Electricity</field>
+        <field name="carbon_value">0.42</field>
+    </record>
+
+    <!-- Carbon Transactions with dates for graph -->
+    <record id="transaction_jan" model="esg.carbon.transaction">
+        <field name="name">January Fleet Usage</field>
+        <field name="transaction_date">2026-01-15</field>
+        <field name="activity_amount">3200</field>
+        <field name="emission_factor_id" ref="factor_fleet_fuel"/>
+    </record>
+    <record id="transaction_feb" model="esg.carbon.transaction">
+        <field name="name">February Manufacturing</field>
+        <field name="transaction_date">2026-02-10</field>
+        <field name="activity_amount">15000</field>
+        <field name="emission_factor_id" ref="factor_manufacturing"/>
+    </record>
+    <record id="transaction_mar" model="esg.carbon.transaction">
+        <field name="name">March Electricity</field>
+        <field name="transaction_date">2026-03-05</field>
+        <field name="activity_amount">85000</field>
+        <field name="emission_factor_id" ref="factor_electricity"/>
+    </record>
+    <record id="transaction_apr" model="esg.carbon.transaction">
+        <field name="name">April Fleet Usage</field>
+        <field name="transaction_date">2026-04-12</field>
+        <field name="activity_amount">4100</field>
+        <field name="emission_factor_id" ref="factor_fleet_fuel"/>
+    </record>
+    <record id="transaction_may" model="esg.carbon.transaction">
+        <field name="name">May Manufacturing</field>
+        <field name="transaction_date">2026-05-20</field>
+        <field name="activity_amount">18200</field>
+        <field name="emission_factor_id" ref="factor_manufacturing"/>
+    </record>
+
+    <!-- Assets -->
+    <record id="asset_ev_fleet_1" model="esg.asset">
+        <field name="name">EV Fleet Unit #1</field>
+        <field name="department_id" ref="department_operations"/>
+        <field name="state">allocated</field>
+    </record>
+    <record id="asset_solar_panel" model="esg.asset">
+        <field name="name">Solar Panel Array</field>
+        <field name="department_id" ref="department_engineering"/>
+        <field name="state">available</field>
+    </record>
+    <record id="asset_carbon_sensor" model="esg.asset">
+        <field name="name">Carbon Sensor Kit</field>
+        <field name="department_id" ref="department_engineering"/>
+        <field name="state">allocated</field>
+    </record>
+    <record id="asset_audit_toolkit" model="esg.asset">
+        <field name="name">Compliance Audit Toolkit</field>
+        <field name="department_id" ref="department_finance"/>
+        <field name="state">available</field>
+    </record>
+    <record id="asset_training_kit" model="esg.asset">
+        <field name="name">CSR Training Kit</field>
+        <field name="department_id" ref="department_hr"/>
+        <field name="state">available</field>
+    </record>
+
+    <!-- Bookings -->
+    <record id="booking_ev_active" model="esg.asset.booking">
+        <field name="name">Q2 Fleet Deployment</field>
+        <field name="asset_id" ref="asset_ev_fleet_1"/>
+        <field name="start_date">2026-04-01</field>
+        <field name="end_date">2026-06-30</field>
+        <field name="state">active</field>
+    </record>
+    <record id="booking_sensor_active" model="esg.asset.booking">
+        <field name="name">Emissions Monitoring</field>
+        <field name="asset_id" ref="asset_carbon_sensor"/>
+        <field name="start_date">2026-03-15</field>
+        <field name="end_date">2026-05-15</field>
+        <field name="state">active</field>
+    </record>
+    <record id="booking_sensor_overdue" model="esg.asset.booking">
+        <field name="name">Overdue Sensor Return</field>
+        <field name="asset_id" ref="asset_carbon_sensor"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-02-28</field>
+        <field name="state">overdue</field>
+    </record>
+    <record id="booking_audit_returned" model="esg.asset.booking">
+        <field name="name">Q1 Audit Cycle</field>
+        <field name="asset_id" ref="asset_audit_toolkit"/>
+        <field name="start_date">2026-01-10</field>
+        <field name="end_date">2026-03-10</field>
+        <field name="state">returned</field>
+    </record>
+
+</odoo>

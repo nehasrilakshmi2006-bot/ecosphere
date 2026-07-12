@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Emission Factor Views -->
+    <record id="view_esg_emission_factor_list" model="ir.ui.view">
+        <field name="name">esg.emission.factor.list</field>
+        <field name="model">esg.emission.factor</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="carbon_value"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_esg_emission_factor_form" model="ir.ui.view">
+        <field name="name">esg.emission.factor.form</field>
+        <field name="model">esg.emission.factor</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="carbon_value"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_emission_factor" model="ir.actions.act_window">
+        <field name="name">Emission Factors</field>
+        <field name="res_model">esg.emission.factor</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Carbon Transaction Views -->
+    <record id="view_esg_carbon_transaction_list" model="ir.ui.view">
+        <field name="name">esg.carbon.transaction.list</field>
+        <field name="model">esg.carbon.transaction</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="transaction_date"/>
+                <field name="activity_amount"/>
+                <field name="emission_factor_id"/>
+                <field name="total_emissions"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_esg_carbon_transaction_form" model="ir.ui.view">
+        <field name="name">esg.carbon.transaction.form</field>
+        <field name="model">esg.carbon.transaction</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="transaction_date"/>
+                        <field name="activity_amount"/>
+                        <field name="emission_factor_id"/>
+                        <field name="total_emissions"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_carbon_transaction" model="ir.actions.act_window">
+        <field name="name">Carbon Transactions</field>
+        <field name="res_model">esg.carbon.transaction</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Compliance Issue Views -->
+    <record id="view_esg_compliance_issue_list" model="ir.ui.view">
+        <field name="name">esg.compliance.issue.list</field>
+        <field name="model">esg.compliance.issue</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="owner_id"/>
+                <field name="due_date"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_esg_compliance_issue_form" model="ir.ui.view">
+        <field name="name">esg.compliance.issue.form</field>
+        <field name="model">esg.compliance.issue</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="owner_id"/>
+                        <field name="due_date"/>
+                        <field name="status"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_compliance_issue" model="ir.actions.act_window">
+        <field name="name">Compliance Issues</field>
+        <field name="res_model">esg.compliance.issue</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem
+        id="menu_ecosphere_root"
+        name="EcoSphere"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_esg_emission_factor"
+        name="Emission Factors"
+        parent="menu_ecosphere_root"
+        action="action_esg_emission_factor"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_esg_carbon_transaction"
+        name="Carbon Transactions"
+        parent="menu_ecosphere_root"
+        action="action_esg_carbon_transaction"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_esg_compliance_issue"
+        name="Compliance Issues"
+        parent="menu_ecosphere_root"
+        action="action_esg_compliance_issue"
+        sequence="30"/>
+
+</odoo>

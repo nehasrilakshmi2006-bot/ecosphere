@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Department Leaderboard List -->
+    <record id="view_esg_department_leaderboard_list" model="ir.ui.view">
+        <field name="name">esg.department.leaderboard.list</field>
+        <field name="model">esg.department</field>
+        <field name="arch" type="xml">
+            <list string="Department ESG Rankings" default_order="total_score desc" create="false" delete="false">
+                <field name="rank" string="#" widget="badge" decoration-success="rank == 1" decoration-info="rank == 2" decoration-warning="rank == 3"/>
+                <field name="name" string="Department"/>
+                <field name="environmental_score" string="Environmental" widget="progressbar"/>
+                <field name="social_score" string="Social" widget="progressbar"/>
+                <field name="governance_score" string="Governance" widget="progressbar"/>
+                <field name="total_score" string="Total Score" sum="Total"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Department Form -->
+    <record id="view_esg_department_form" model="ir.ui.view">
+        <field name="name">esg.department.form</field>
+        <field name="model">esg.department</field>
+        <field name="arch" type="xml">
+            <form string="Department ESG Profile">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Department Name"/>
+                        </h1>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-6 col-lg-3 mb-3">
+                            <label for="environmental_score" class="fw-bold text-muted">Environmental Score</label>
+                            <field name="environmental_score" widget="progressbar"/>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-3">
+                            <label for="social_score" class="fw-bold text-muted">Social Score</label>
+                            <field name="social_score" widget="progressbar"/>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-3">
+                            <label for="governance_score" class="fw-bold text-muted">Governance Score</label>
+                            <field name="governance_score" widget="progressbar"/>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-3">
+                            <label for="total_score" class="fw-bold text-muted">Total Score</label>
+                            <field name="total_score" readonly="1"/>
+                        </div>
+                    </div>
+                    <group>
+                        <field name="rank" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_department_leaderboard" model="ir.actions.act_window">
+        <field name="name">Department ESG Rankings</field>
+        <field name="res_model">esg.department</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_esg_department_leaderboard_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create departments to populate the ESG leaderboard.
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_esg_department_leaderboard"
+        name="Department Rankings"
+        parent="menu_ecosphere_root"
+        action="action_esg_department_leaderboard"
+        sequence="5"/>
+
+</odoo>
