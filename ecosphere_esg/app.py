@@ -11,7 +11,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-# ── Page config ──────────────────────────────────────────────────────────────
+# ── Page config ──────────────────────────────────────────
 st.set_page_config(
     page_title="EcoSphere ESG",
     page_icon="🌿",
@@ -19,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Global styles ────────────────────────────────────────────────────────────
+# ── Global styles ─────────────────────────────────────────
 st.markdown(
     """
     <style>
@@ -184,7 +184,7 @@ st.markdown(
 )
 
 
-# ── Mock Odoo backend data ───────────────────────────────────────────────────
+# ── Mock Odoo backend data ────────────────────────────────
 @st.cache_data
 def load_departments() -> pd.DataFrame:
     """Simulates esg.department records from Odoo."""
@@ -652,7 +652,7 @@ st.markdown(
 render_metric_row(kpis)
 st.markdown("")
 
-# ── Page routing ─────────────────────────────────────────────────────────────
+# ── Page routing ──────────────────────────────────────────
 if page == "Executive Overview":
     st.markdown('<p class="section-header">Executive Overview</p>', unsafe_allow_html=True)
     st.markdown('<span class="data-source-tag">Odoo · Aggregated KPIs</span>', unsafe_allow_html=True)
