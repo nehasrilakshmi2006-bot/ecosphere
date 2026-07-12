@@ -27,6 +27,7 @@ class EsgBadge(models.Model):
                 badge._notify_badge_unlock()
         return badges
 
+    
     def action_unlock_badge(self):
         for badge in self:
             if badge.is_unlocked:
