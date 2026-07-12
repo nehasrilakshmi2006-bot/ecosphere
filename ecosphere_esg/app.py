@@ -1,10 +1,11 @@
 """
 EcoSphere ESG Management Platform — Streamlit Dashboard
 Simulates data pulled from Odoo backend models (esg.emission.factor,
-esg.carbon.transaction, esg.compliance.issue).
+esg.carbon.transaction, esg.csr.activity, esg.challenge, esg.department).
 """
 
 import time
+from datetime import date, datetime
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -56,57 +57,6 @@ st.markdown(
         color: #94a3b8;
         font-size: 1rem;
         margin-bottom: 1.5rem;
-    }
-
-    .kpi-card {
-        background: linear-gradient(145deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));
-        border: 1px solid rgba(16, 185, 129, 0.2);
-        border-radius: 16px;
-        padding: 1.4rem 1.6rem;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        height: 100%;
-    }
-
-    .kpi-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 40px rgba(16, 185, 129, 0.15);
-    }
-
-    .kpi-label {
-        color: #94a3b8;
-        font-size: 0.82rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 0.5rem;
-    }
-
-    .kpi-value {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #f1f5f9;
-        line-height: 1.1;
-    }
-
-    .kpi-delta-up {
-        color: #34d399;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-top: 0.4rem;
-    }
-
-    .kpi-delta-down {
-        color: #f87171;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-top: 0.4rem;
-    }
-
-    .kpi-icon {
-        font-size: 1.6rem;
-        float: right;
-        opacity: 0.7;
     }
 
     .section-header {
@@ -171,6 +121,14 @@ st.markdown(
         margin-bottom: 1rem;
     }
 
+    .report-builder-box {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 12px;
+        padding: 0.75rem 0.5rem;
+        margin-top: 0.5rem;
+    }
+
     div[data-testid="stMetric"] {
         background: linear-gradient(145deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));
         border: 1px solid rgba(16, 185, 129, 0.2);
@@ -211,6 +169,15 @@ st.markdown(
         box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
         transform: translateY(-1px) !important;
     }
+
+    div[data-testid="stDownloadButton"] > button {
+        background: linear-gradient(135deg, #059669, #10b981) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        width: 100%;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -218,6 +185,34 @@ st.markdown(
 
 
 # ── Mock Odoo backend data ───────────────────────────────────────────────────
+@st.cache_data
+def load_departments() -> pd.DataFrame:
+    """Simulates esg.department records from Odoo."""
+    return pd.DataFrame(
+        {
+            "name": ["Operations", "Engineering", "Human Resources", "Finance"],
+            "environmental_score": [82, 91, 68, 72],
+            "social_score": [74, 79, 95, 70],
+            "governance_score": [88, 85, 80, 92],
+        }
+    )
+
+
+@st.cache_data
+def load_esg_categories() -> pd.DataFrame:
+    """Simulates esg.category records from Odoo."""
+    return pd.DataFrame(
+        {
+            "name": ["Carbon Reduction", "CSR Engagement", "Regulatory Compliance"],
+            "description": [
+                "Initiatives focused on lowering carbon footprint.",
+                "Corporate social responsibility programs.",
+                "Governance and regulatory adherence.",
+            ],
+        }
+    )
+
+
 @st.cache_data
 def load_emission_factors() -> pd.DataFrame:
     """Simulates esg.emission.factor records from Odoo."""
@@ -235,10 +230,80 @@ def load_carbon_transactions() -> pd.DataFrame:
     """Simulates esg.carbon.transaction records from Odoo."""
     return pd.DataFrame(
         {
-            "name": ["Q1 Fleet Usage", "Plant Line A", "HQ Electricity", "Sales Travel", "Warehouse Ops"],
-            "activity_amount": [4200, 18500, 96000, 12400, 7300],
-            "emission_factor": ["Fleet Fuel", "Manufacturing", "Electricity", "Business Travel", "Manufacturing"],
-            "total_emissions": [9702.0, 15725.0, 40320.0, 2356.0, 6205.0],
+            "name": [
+                "January Fleet Usage",
+                "February Manufacturing",
+                "March Electricity",
+                "April Fleet Usage",
+                "May Manufacturing",
+                "June Business Travel",
+            ],
+            "transaction_date": pd.to_datetime(
+                ["2026-01-15", "2026-02-10", "2026-03-05", "2026-04-12", "2026-05-20", "2026-06-08"]
+            ),
+            "department": ["Operations", "Operations", "Engineering", "Operations", "Operations", "Finance"],
+            "category": [
+                "Carbon Reduction",
+                "Carbon Reduction",
+                "Carbon Reduction",
+                "Carbon Reduction",
+                "Carbon Reduction",
+                "Regulatory Compliance",
+            ],
+            "activity_amount": [3200, 15000, 85000, 4100, 18200, 12400],
+            "emission_factor": ["Fleet Fuel", "Manufacturing", "Electricity", "Fleet Fuel", "Manufacturing", "Business Travel"],
+            "total_emissions": [7392.0, 12750.0, 35700.0, 9471.0, 15470.0, 2356.0],
+        }
+    )
+
+
+@st.cache_data
+def load_csr_activities() -> pd.DataFrame:
+    """Simulates esg.csr.activity records from Odoo."""
+    return pd.DataFrame(
+        {
+            "name": [
+                "Community Volunteer Day",
+                "Green Commute Week",
+                "Mentorship Program",
+                "Charity Fundraiser",
+                "Eco Workshop",
+            ],
+            "activity_date": pd.to_datetime(
+                ["2026-01-20", "2026-02-14", "2026-03-10", "2026-04-05", "2026-05-18"]
+            ),
+            "department": [
+                "Human Resources",
+                "Human Resources",
+                "Engineering",
+                "Finance",
+                "Operations",
+            ],
+            "category": [
+                "CSR Engagement",
+                "CSR Engagement",
+                "CSR Engagement",
+                "CSR Engagement",
+                "Carbon Reduction",
+            ],
+            "employee": ["Sarah Chen", "Maria Lopez", "David Kim", "James Okonkwo", "Priya Sharma"],
+            "approval_state": ["approved", "approved", "submitted", "approved", "submitted"],
+        }
+    )
+
+
+@st.cache_data
+def load_challenges() -> pd.DataFrame:
+    """Simulates esg.challenge records from Odoo."""
+    return pd.DataFrame(
+        {
+            "name": ["30-Day Green Commute", "Zero Waste Week", "ISO 14001 Audit Readiness"],
+            "start_date": pd.to_datetime(["2026-01-01", "2026-02-01", "2026-03-01"]),
+            "end_date": pd.to_datetime(["2026-03-31", "2026-02-28", "2026-06-30"]),
+            "department": ["Human Resources", "Operations", "Finance"],
+            "category": ["CSR Engagement", "Carbon Reduction", "Regulatory Compliance"],
+            "module": ["social", "environmental", "governance"],
+            "status": ["active", "completed", "active"],
         }
     )
 
@@ -250,8 +315,15 @@ def load_compliance_issues() -> pd.DataFrame:
         {
             "name": ["ISO 14001 Audit", "Scope 3 Disclosure", "Waste Permit Renewal", "Safety Inspection"],
             "owner": ["Sarah Chen", "James Okonkwo", "Maria Lopez", "David Kim"],
-            "due_date": ["2026-03-15", "2026-04-01", "2026-02-28", "2026-05-10"],
+            "due_date": pd.to_datetime(["2026-03-15", "2026-04-01", "2026-02-28", "2026-05-10"]),
             "status": ["Resolved", "Open", "Overdue", "Open"],
+            "department": ["Finance", "Engineering", "Operations", "Human Resources"],
+            "category": [
+                "Regulatory Compliance",
+                "Regulatory Compliance",
+                "Regulatory Compliance",
+                "Regulatory Compliance",
+            ],
         }
     )
 
@@ -279,23 +351,112 @@ def load_employee_badges() -> pd.DataFrame:
                 "Alex Rivera",
             ],
             "points": [850, 720, 640, 590, 510, 480],
-            "awarded": ["2026-01-12", "2026-02-03", "2026-01-28", "2026-02-14", "2026-03-01", "2026-02-20"],
+            "awarded": pd.to_datetime(
+                ["2026-01-12", "2026-02-03", "2026-01-28", "2026-02-14", "2026-03-01", "2026-02-20"]
+            ),
         }
     )
 
 
-def compute_kpis(transactions: pd.DataFrame, compliance: pd.DataFrame) -> dict:
+def build_report_dataframe(
+    carbon_transactions: pd.DataFrame,
+    csr_activities: pd.DataFrame,
+    challenges: pd.DataFrame,
+    compliance_issues: pd.DataFrame,
+) -> pd.DataFrame:
+    """Unified export dataset aligned with Odoo ESG models."""
+    carbon = carbon_transactions.assign(
+        record_type="Carbon Transaction",
+        record_date=carbon_transactions["transaction_date"],
+        metric_value=carbon_transactions["total_emissions"],
+        metric_unit="kg CO₂e",
+        status="posted",
+    )[
+        ["record_type", "name", "record_date", "department", "category", "metric_value", "metric_unit", "status"]
+    ]
+
+    csr = csr_activities.assign(
+        record_type="CSR Activity",
+        record_date=csr_activities["activity_date"],
+        metric_value=1,
+        metric_unit="participation",
+        status=csr_activities["approval_state"],
+    )[
+        ["record_type", "name", "record_date", "department", "category", "metric_value", "metric_unit", "status"]
+    ]
+
+    chal = challenges.assign(
+        record_type="Challenge",
+        record_date=challenges["start_date"],
+        metric_value=challenges["module"].map({"environmental": 1, "social": 1, "governance": 1}),
+        metric_unit="challenge",
+        status=challenges["status"],
+    )[
+        ["record_type", "name", "record_date", "department", "category", "metric_value", "metric_unit", "status"]
+    ]
+
+    compliance = compliance_issues.assign(
+        record_type="Compliance Issue",
+        record_date=compliance_issues["due_date"],
+        metric_value=1,
+        metric_unit="issue",
+        status=compliance_issues["status"],
+    )[
+        ["record_type", "name", "record_date", "department", "category", "metric_value", "metric_unit", "status"]
+    ]
+
+    report_df = pd.concat([carbon, csr, chal, compliance], ignore_index=True)
+    report_df["record_date"] = pd.to_datetime(report_df["record_date"]).dt.date
+    return report_df.sort_values("record_date", ascending=False).reset_index(drop=True)
+
+
+def filter_report_data(
+    report_df: pd.DataFrame,
+    department: str,
+    date_range: tuple[date, date] | date | None,
+    categories: list[str],
+) -> pd.DataFrame:
+    """Apply sidebar report-builder filters."""
+    filtered = report_df.copy()
+
+    if department != "All Departments":
+        filtered = filtered[filtered["department"] == department]
+
+    if categories:
+        filtered = filtered[filtered["category"].isin(categories)]
+
+    if isinstance(date_range, tuple) and len(date_range) == 2:
+        start_date, end_date = date_range
+        filtered = filtered[
+            (filtered["record_date"] >= start_date) & (filtered["record_date"] <= end_date)
+        ]
+    elif isinstance(date_range, date):
+        filtered = filtered[filtered["record_date"] == date_range]
+
+    return filtered.reset_index(drop=True)
+
+
+def compute_kpis(
+    transactions: pd.DataFrame,
+    compliance: pd.DataFrame,
+    csr_activities: pd.DataFrame,
+    challenges: pd.DataFrame,
+) -> dict:
     total_emissions = transactions["total_emissions"].sum()
-    audits_done = (compliance["status"] == "Resolved").sum()
+    audits_done = int((compliance["status"] == "Resolved").sum())
     audits_total = len(compliance)
-    csr_participation = 87.4
-    active_challenges = 12
-    esg_score = min(100, round(
-        40
-        + (audits_done / max(audits_total, 1)) * 25
-        + (csr_participation / 100) * 20
-        + max(0, 15 - (total_emissions / 10000))
-    ))
+    engaged = csr_activities[csr_activities["approval_state"].isin(["submitted", "approved"])]
+    csr_participation = round(len(engaged) / max(len(csr_activities), 1) * 100, 1)
+    active_challenges = int((challenges["status"] == "active").sum())
+    esg_score = min(
+        100,
+        round(
+            40
+            + (audits_done / max(audits_total, 1)) * 25
+            + (csr_participation / 100) * 20
+            + max(0, 15 - (total_emissions / 10000))
+        ),
+    )
     return {
         "carbon_emissions": total_emissions,
         "carbon_delta": -8.3,
@@ -307,6 +468,54 @@ def compute_kpis(transactions: pd.DataFrame, compliance: pd.DataFrame) -> dict:
         "challenges_delta": 3,
         "esg_score": esg_score,
     }
+
+
+def render_metric_row(kpis: dict) -> None:
+    """Top-level KPI cards using native Streamlit metrics."""
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric(
+            label="Total Carbon Emissions",
+            value=f"{kpis['carbon_emissions']:,.0f} kg",
+            delta=f"{kpis['carbon_delta']}% vs last quarter",
+            delta_color="inverse",
+        )
+    with col2:
+        st.metric(
+            label="Active Challenges",
+            value=kpis["active_challenges"],
+            delta=f"+{kpis['challenges_delta']} this month",
+        )
+    with col3:
+        st.metric(
+            label="CSR Participation Rate",
+            value=f"{kpis['csr_participation']:.1f}%",
+            delta=f"+{kpis['csr_delta']}% engagement",
+        )
+    with col4:
+        st.metric(
+            label="Compliance Audits",
+            value=f"{kpis['audits_done']}/{kpis['audits_total']}",
+            delta=f"{kpis['audits_done']} resolved",
+        )
+
+
+def render_emissions_over_time(transactions: pd.DataFrame, chart_type: str = "bar") -> None:
+    """Interactive emissions trend chart using native Streamlit charts."""
+    emissions_ts = (
+        transactions.set_index("transaction_date")
+        .resample("ME")["total_emissions"]
+        .sum()
+        .reset_index()
+    )
+    emissions_ts["transaction_date"] = emissions_ts["transaction_date"].dt.strftime("%b %Y")
+    emissions_ts = emissions_ts.set_index("transaction_date")
+
+    st.markdown("#### Carbon Emissions Over Time")
+    if chart_type == "line":
+        st.line_chart(emissions_ts, color="#10b981", height=360)
+    else:
+        st.bar_chart(emissions_ts, color="#10b981", height=360)
 
 
 def render_esg_gauge(score: int) -> None:
@@ -346,70 +555,26 @@ def render_esg_gauge(score: int) -> None:
     st.plotly_chart(fig, use_container_width=True)
 
 
-def render_kpi_row(kpis: dict) -> None:
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.markdown(
-            f"""
-            <div class="kpi-card">
-                <span class="kpi-icon">🌍</span>
-                <div class="kpi-label">Carbon Emissions</div>
-                <div class="kpi-value">{kpis['carbon_emissions']:,.0f}</div>
-                <div class="kpi-delta-up">▼ {abs(kpis['carbon_delta'])}% vs last quarter</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with col2:
-        st.markdown(
-            f"""
-            <div class="kpi-card">
-                <span class="kpi-icon">📋</span>
-                <div class="kpi-label">Compliance Audits</div>
-                <div class="kpi-value">{kpis['audits_done']}/{kpis['audits_total']}</div>
-                <div class="kpi-delta-up">▲ {kpis['audits_done']} resolved</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with col3:
-        st.markdown(
-            f"""
-            <div class="kpi-card">
-                <span class="kpi-icon">🤝</span>
-                <div class="kpi-label">CSR Participation</div>
-                <div class="kpi-value">{kpis['csr_participation']:.1f}%</div>
-                <div class="kpi-delta-up">▲ {kpis['csr_delta']}% engagement</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with col4:
-        st.markdown(
-            f"""
-            <div class="kpi-card">
-                <span class="kpi-icon">🎯</span>
-                <div class="kpi-label">Active Challenges</div>
-                <div class="kpi-value">{kpis['active_challenges']}</div>
-                <div class="kpi-delta-up">▲ {kpis['challenges_delta']} new this month</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-
 # ── Load data ────────────────────────────────────────────────────────────────
+departments = load_departments()
+esg_categories = load_esg_categories()
 emission_factors = load_emission_factors()
 carbon_transactions = load_carbon_transactions()
+csr_activities = load_csr_activities()
+challenges = load_challenges()
 compliance_issues = load_compliance_issues()
 employee_badges = load_employee_badges()
-kpis = compute_kpis(carbon_transactions, compliance_issues)
+report_data = build_report_dataframe(
+    carbon_transactions, csr_activities, challenges, compliance_issues
+)
+kpis = compute_kpis(carbon_transactions, compliance_issues, csr_activities, challenges)
 
-# ── Sidebar navigation ───────────────────────────────────────────────────────
+department_options = ["All Departments"] + departments["name"].tolist()
+category_options = esg_categories["name"].tolist()
+default_start = carbon_transactions["transaction_date"].min().date()
+default_end = carbon_transactions["transaction_date"].max().date()
+
+# ── Sidebar navigation & report builder ──────────────────────────────────────
 with st.sidebar:
     st.markdown("## 🌿 EcoSphere")
     st.markdown(
@@ -423,12 +588,52 @@ with st.sidebar:
         label_visibility="collapsed",
     )
     st.divider()
+
+    st.markdown("### 📊 Report Builder")
+    st.markdown('<div class="report-builder-box">', unsafe_allow_html=True)
+
+    selected_department = st.selectbox("Department", department_options, key="report_department")
+    selected_date_range = st.date_input(
+        "Date Range",
+        value=(default_start, default_end),
+        min_value=date(2026, 1, 1),
+        max_value=date(2026, 12, 31),
+        key="report_date_range",
+    )
+    selected_categories = st.multiselect(
+        "ESG Categories",
+        options=category_options,
+        default=category_options,
+        key="report_categories",
+    )
+
+    filtered_report = filter_report_data(
+        report_data,
+        selected_department,
+        selected_date_range,
+        selected_categories,
+    )
+
+    st.caption(f"{len(filtered_report)} records match your filters")
+
+    csv_payload = filtered_report.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="Export Report as CSV",
+        data=csv_payload,
+        file_name=f"ecosphere_esg_report_{datetime.now():%Y%m%d_%H%M}.csv",
+        mime="text/csv",
+        use_container_width=True,
+    )
+
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.divider()
     st.markdown(
         """
         <div style="color:#64748b;font-size:0.78rem;line-height:1.5;">
         <b style="color:#94a3b8;">Data Sources</b><br>
-        esg.emission.factor<br>
         esg.carbon.transaction<br>
+        esg.csr.activity<br>
+        esg.challenge<br>
         esg.compliance.issue
         </div>
         """,
@@ -444,7 +649,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-render_kpi_row(kpis)
+render_metric_row(kpis)
 st.markdown("")
 
 # ── Page routing ─────────────────────────────────────────────────────────────
@@ -452,11 +657,30 @@ if page == "Executive Overview":
     st.markdown('<p class="section-header">Executive Overview</p>', unsafe_allow_html=True)
     st.markdown('<span class="data-source-tag">Odoo · Aggregated KPIs</span>', unsafe_allow_html=True)
 
+    chart_toggle_col, _ = st.columns([1, 3])
+    with chart_toggle_col:
+        emissions_chart_type = st.selectbox(
+            "Emissions chart type",
+            ["Bar Chart", "Line Chart"],
+            label_visibility="collapsed",
+        )
+
+    render_emissions_over_time(
+        carbon_transactions,
+        chart_type="line" if emissions_chart_type == "Line Chart" else "bar",
+    )
+
     col_left, col_right = st.columns([1, 1])
 
     with col_left:
         render_esg_gauge(kpis["esg_score"])
-        rating = "Excellent" if kpis["esg_score"] >= 80 else "Good" if kpis["esg_score"] >= 60 else "Needs Attention"
+        rating = (
+            "Excellent"
+            if kpis["esg_score"] >= 80
+            else "Good"
+            if kpis["esg_score"] >= 60
+            else "Needs Attention"
+        )
         st.markdown(
             f'<p class="score-caption">Overall rating: <b style="color:#34d399;">{rating}</b></p>',
             unsafe_allow_html=True,
@@ -466,7 +690,11 @@ if page == "Executive Overview":
         st.markdown("#### Score Breakdown")
         st.metric("Environmental", f"{min(100, round(kpis['esg_score'] * 0.95))}", delta="2.1 pts")
         st.metric("Social (CSR)", f"{kpis['csr_participation']:.0f}%", delta=f"+{kpis['csr_delta']}%")
-        st.metric("Governance", f"{round(kpis['audits_done'] / max(kpis['audits_total'], 1) * 100)}%", delta="1 audit pending")
+        st.metric(
+            "Governance",
+            f"{round(kpis['audits_done'] / max(kpis['audits_total'], 1) * 100)}%",
+            delta="1 audit pending",
+        )
 
         st.markdown("#### Recent Compliance Issues")
         st.dataframe(
@@ -477,6 +705,9 @@ if page == "Executive Overview":
             hide_index=True,
         )
 
+    st.markdown("#### Filtered Report Preview")
+    st.dataframe(filtered_report, use_container_width=True, hide_index=True)
+
     st.markdown("#### Carbon Transaction Summary")
     chart_col, table_col = st.columns([1, 1])
     with chart_col:
@@ -484,7 +715,7 @@ if page == "Executive Overview":
             go.Bar(
                 x=carbon_transactions["name"],
                 y=carbon_transactions["total_emissions"],
-                marker_color=["#10b981", "#34d399", "#6ee7b7", "#059669", "#047857"],
+                marker_color=["#10b981", "#34d399", "#6ee7b7", "#059669", "#047857", "#065f46"],
                 text=carbon_transactions["total_emissions"].apply(lambda v: f"{v:,.0f}"),
                 textposition="outside",
             )
@@ -506,6 +737,9 @@ if page == "Executive Overview":
             carbon_transactions.rename(
                 columns={
                     "name": "Transaction",
+                    "transaction_date": "Date",
+                    "department": "Department",
+                    "category": "Category",
                     "activity_amount": "Amount",
                     "emission_factor": "Factor",
                     "total_emissions": "Total CO₂e (kg)",
@@ -522,6 +756,8 @@ elif page == "Environmental Tracking":
         '<span class="data-source-tag">Odoo · esg.emission.factor + esg.carbon.transaction</span>',
         unsafe_allow_html=True,
     )
+
+    render_emissions_over_time(carbon_transactions, chart_type="bar")
 
     form_col, result_col = st.columns([1, 1])
 
@@ -595,12 +831,14 @@ elif page == "Environmental Tracking":
 
         st.markdown("##### Simulated Odoo Transaction Record")
         new_record = pd.DataFrame(
-            [{
-                "name": f"Calc · {activity_type}",
-                "activity_amount": operational_amount,
-                "emission_factor_id": activity_type,
-                "total_emissions": round(total, 2),
-            }]
+            [
+                {
+                    "name": f"Calc · {activity_type}",
+                    "activity_amount": operational_amount,
+                    "emission_factor_id": activity_type,
+                    "total_emissions": round(total, 2),
+                }
+            ]
         )
         st.dataframe(new_record, use_container_width=True, hide_index=True)
 
@@ -611,6 +849,14 @@ else:
         '<span class="data-source-tag">Badge Auto-Award Engine · Click to celebrate!</span>',
         unsafe_allow_html=True,
     )
+
+    gam_col1, gam_col2, gam_col3 = st.columns(3)
+    with gam_col1:
+        st.metric("Total Badges", len(employee_badges))
+    with gam_col2:
+        st.metric("Top Score", f"{employee_badges['points'].max()} pts")
+    with gam_col3:
+        st.metric("Active Challenges", kpis["active_challenges"])
 
     st.markdown(
         "Click any badge below to trigger the **Badge Auto-Award** celebration. "

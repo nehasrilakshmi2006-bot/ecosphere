@@ -24,6 +24,8 @@ class EsgReportWizard(models.TransientModel):
     employee_id = fields.Many2one('res.users', string='Employee')
     challenge_id = fields.Many2one('esg.challenge', string='Challenge')
     category_id = fields.Many2one('esg.category', string='ESG Category')
+    export_file = fields.Binary(string='Export File', readonly=True, attachment=False)
+    file_name = fields.Char(string='File Name', readonly=True)
 
     def _validate_date_range(self):
         self.ensure_one()
@@ -45,13 +47,20 @@ class EsgReportWizard(models.TransientModel):
         if not self.module or self.module == 'governance':
             lines.extend(self._get_governance_lines())
 
-        if self.challenge_id:
-            lines = [line for line in lines if line.get('challenge') == self.challenge_id.name]
-
-        if self.category_id:
-            lines = [line for line in lines if line.get('category') == self.category_id.name]
-
         return lines
+
+    def _get_challenge_date_domain(self):
+        """Return a permissive overlap domain for challenge date filtering."""
+        domain = []
+        if self.date_start:
+            domain += [
+                '|', ('end_date', '=', False), ('end_date', '>=', self.date_start),
+            ]
+        if self.date_end:
+            domain += [
+                '|', ('start_date', '=', False), ('start_date', '<=', self.date_end),
+            ]
+        return domain
 
     def _get_environmental_lines(self):
         CarbonTransaction = self.env['esg.carbon.transaction']
@@ -103,11 +112,7 @@ class EsgReportWizard(models.TransientModel):
                 'details': _('Social pillar score for %(dept)s') % {'dept': department.name},
             })
 
-        challenge_domain = [('module', '=', 'social')]
-        if self.date_start:
-            challenge_domain.append(('start_date', '>=', self.date_start))
-        if self.date_end:
-            challenge_domain.append(('end_date', '<=', self.date_end))
+        challenge_domain = [('module', '=', 'social')] + self._get_challenge_date_domain()
         if self.department_id:
             challenge_domain.append(('department_id', '=', self.department_id.id))
         if self.employee_id:
@@ -156,11 +161,7 @@ class EsgReportWizard(models.TransientModel):
                 'details': _('Status: %(status)s') % {'status': issue.status},
             })
 
-        challenge_domain = [('module', '=', 'governance')]
-        if self.date_start:
-            challenge_domain.append(('start_date', '>=', self.date_start))
-        if self.date_end:
-            challenge_domain.append(('end_date', '<=', self.date_end))
+        challenge_domain = [('module', '=', 'governance')] + self._get_challenge_date_domain()
         if self.department_id:
             challenge_domain.append(('department_id', '=', self.department_id.id))
         if self.employee_id:
@@ -192,8 +193,8 @@ class EsgReportWizard(models.TransientModel):
             raise UserError(_('No data found for the selected filters.'))
         return self.env.ref('ecosphere_esg.action_report_esg_summary').report_action(self)
 
-    def action_export_excel(self):
-        """Export filtered report data to a CSV file (Excel-compatible)."""
+    def action_export_csv(self):
+        """Export filtered report data to a CSV file and reload the wizard."""
         self.ensure_one()
         lines = self._get_report_lines()
         if not lines:
@@ -206,10 +207,13 @@ class EsgReportWizard(models.TransientModel):
             'ESG Category', 'Challenge', 'Value', 'Details',
         ])
         for line in lines:
+            line_date = line.get('date', '')
+            if line_date:
+                line_date = fields.Date.to_string(line_date)
             writer.writerow([
                 line.get('module', ''),
                 line.get('name', ''),
-                line.get('date', '') or '',
+                line_date,
                 line.get('department', ''),
                 line.get('employee', ''),
                 line.get('category', ''),
@@ -218,17 +222,17 @@ class EsgReportWizard(models.TransientModel):
                 line.get('details', ''),
             ])
 
-        filename = 'ESG_Report_%s.csv' % fields.Date.today()
-        attachment = self.env['ir.attachment'].create({
-            'name': filename,
-            'type': 'binary',
-            'datas': base64.b64encode(output.getvalue().encode('utf-8-sig')),
-            'mimetype': 'text/csv',
-            'res_model': self._name,
-            'res_id': self.id,
+        self.write({
+            'export_file': base64.b64encode(output.getvalue().encode('utf-8-sig')),
+            'file_name': 'ESG_Report.csv',
         })
+
         return {
-            'type': 'ir.actions.act_url',
-            'url': '/web/content/%s?download=true' % attachment.id,
-            'target': 'self',
+            'type': 'ir.actions.act_window',
+            'name': _('ESG Report Builder'),
+            'res_model': self._name,
+            'view_mode': 'form',
+            'res_id': self.id,
+            'target': 'new',
+            'context': self.env.context,
         }

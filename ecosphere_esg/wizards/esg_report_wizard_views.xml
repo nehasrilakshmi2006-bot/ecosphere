@@ -19,9 +19,13 @@
                         <field name="date_end"/>
                     </group>
                 </group>
+                <group string="CSV Export" invisible="not export_file">
+                    <field name="file_name" invisible="1"/>
+                    <field name="export_file" widget="binary" filename="file_name" readonly="1"/>
+                </group>
                 <footer>
                     <button name="action_generate_pdf" string="Generate PDF" type="object" class="btn-primary" data-hotkey="q"/>
-                    <button name="action_export_excel" string="Export to Excel" type="object" class="btn-secondary" data-hotkey="e"/>
+                    <button name="action_export_csv" string="Export to CSV" type="object" class="btn-secondary" data-hotkey="e"/>
                     <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x"/>
                 </footer>
             </form>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Carbon Transaction: Bar Graph (emissions over time) ── -->
+    <record id="view_esg_carbon_transaction_graph_bar" model="ir.ui.view">
+        <field name="name">esg.carbon.transaction.graph.bar</field>
+        <field name="model">esg.carbon.transaction</field>
+        <field name="arch" type="xml">
+            <graph string="Carbon Emissions Over Time" type="bar" stacked="False">
+                <field name="transaction_date" interval="month"/>
+                <field name="total_emissions" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ── Carbon Transaction: Pivot (emissions analysis) ── -->
+    <record id="view_esg_carbon_transaction_pivot" model="ir.ui.view">
+        <field name="name">esg.carbon.transaction.pivot</field>
+        <field name="model">esg.carbon.transaction</field>
+        <field name="arch" type="xml">
+            <pivot string="Emissions Analysis">
+                <field name="transaction_date" interval="month" type="row"/>
+                <field name="emission_factor_id" type="col"/>
+                <field name="total_emissions" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ── CSR Activity: Pie Graph (employee participation) ── -->
+    <record id="view_esg_csr_activity_graph_pie" model="ir.ui.view">
+        <field name="name">esg.csr.activity.graph.pie</field>
+        <field name="model">esg.csr.activity</field>
+        <field name="arch" type="xml">
+            <graph string="CSR Employee Participation" type="pie">
+                <field name="department_id"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ── Window actions embedded in the board ── -->
+    <record id="action_esg_carbon_emissions_bar" model="ir.actions.act_window">
+        <field name="name">Carbon Emissions Over Time</field>
+        <field name="res_model">esg.carbon.transaction</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_esg_carbon_transaction_graph_bar"/>
+    </record>
+
+    <record id="action_esg_carbon_emissions_pivot" model="ir.actions.act_window">
+        <field name="name">Emissions Analysis</field>
+        <field name="res_model">esg.carbon.transaction</field>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="view_esg_carbon_transaction_pivot"/>
+    </record>
+
+    <record id="action_esg_csr_participation_pie" model="ir.actions.act_window">
+        <field name="name">CSR Employee Participation</field>
+        <field name="res_model">esg.csr.activity</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_esg_csr_activity_graph_pie"/>
+        <field name="domain">[('approval_state', 'in', ['submitted', 'approved'])]</field>
+    </record>
+
+    <!-- ── Executive Overview: board.board layout ── -->
+    <record id="view_esg_executive_overview_board" model="ir.ui.view">
+        <field name="name">esg.executive.overview.board</field>
+        <field name="model">board.board</field>
+        <field name="arch" type="xml">
+            <form string="Executive Overview">
+                <board style="2-1">
+                    <column>
+                        <action name="%(action_esg_carbon_emissions_bar)d"
+                                string="Carbon Emissions Over Time"
+                                view_mode="graph"/>
+                    </column>
+                    <column>
+                        <action name="%(action_esg_csr_participation_pie)d"
+                                string="CSR Employee Participation"
+                                view_mode="graph"/>
+                        <action name="%(action_esg_carbon_emissions_pivot)d"
+                                string="Emissions Analysis"
+                                view_mode="pivot"/>
+                    </column>
+                </board>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_esg_executive_overview" model="ir.actions.act_window">
+        <field name="name">Executive Overview</field>
+        <field name="res_model">board.board</field>
+        <field name="view_mode">form</field>
+        <field name="usage">menu</field>
+        <field name="view_id" ref="view_esg_executive_overview_board"/>
+        <field name="context">{'disable_toolbar': True}</field>
+    </record>
+
+    <!-- Primary home screen for the EcoSphere app -->
+    <menuitem
+        id="menu_esg_executive_overview"
+        name="Executive Overview"
+        parent="menu_ecosphere_root"
+        action="action_esg_executive_overview"
+        sequence="1"/>
+
+    <!-- Opening the EcoSphere app lands on Executive Overview -->
+    <menuitem
+        id="menu_ecosphere_root"
+        action="action_esg_executive_overview"/>
+
+</odoo>

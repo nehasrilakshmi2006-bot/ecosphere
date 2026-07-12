@@ -10,7 +10,7 @@
         and automated notification engine.
     """,
     'author': 'EcoSphere',
-    'depends': ['base', 'web', 'mail'],
+    'depends': ['base', 'web', 'mail', 'board'],
     'data': [
         'security/ir.model.access.csv',
         'data/cron_jobs.xml',
@@ -20,6 +20,7 @@
         'views/esg_views.xml',
         'views/department_views.xml',
         'views/dashboard_views.xml',
+        'views/esg_dashboard_views.xml',
         'views/notification_views.xml',
         'views/res_config_settings_views.xml',
         'wizards/esg_report_wizard_views.xml',

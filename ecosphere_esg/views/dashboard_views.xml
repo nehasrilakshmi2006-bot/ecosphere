@@ -289,7 +289,7 @@
         name="Smart Dashboard"
         parent="menu_ecosphere_root"
         action="action_esg_smart_dashboard"
-        sequence="1"/>
+        sequence="5"/>
 
     <menuitem
         id="menu_esg_carbon_graph"
