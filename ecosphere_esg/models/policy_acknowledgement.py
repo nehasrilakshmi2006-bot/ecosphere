@@ -25,6 +25,11 @@ class EsgPolicyAcknowledgement(models.Model):
             'acknowledged_date': fields.Date.today(),
             'reminder_sent': False,
         })
+        if self.employee_id:
+            self.employee_id._trigger_eco_streak_update(
+                activity_date=fields.Date.today(),
+                source_model=self._name,
+            )
 
     @api.model
     def _cron_policy_acknowledgement_reminders(self):

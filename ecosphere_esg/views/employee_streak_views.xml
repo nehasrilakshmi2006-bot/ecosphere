@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_users_eco_streak_list" model="ir.ui.view">
+        <field name="name">res.users.eco.streak.list</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <list string="Employee Eco Leaderboard" default_order="eco_points desc, current_eco_streak desc, longest_eco_streak desc, name" create="false" delete="false">
+                <field name="display_name" string="Employee"/>
+                <field name="eco_points" string="Eco Points"/>
+                <field name="current_eco_streak" string="🔥 Current Streak"/>
+                <field name="longest_eco_streak" string="🔥 Best Streak"/>
+                <field name="last_green_activity_date" string="Last Green Activity"/>
+                <field name="next_reward_target" string="Next Reward"/>
+                <field name="days_remaining_to_next_reward" string="Days Left"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_res_users_eco_streak_search" model="ir.ui.view">
+        <field name="name">res.users.eco.streak.search</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <search string="Employee Eco Search">
+                <field name="name"/>
+                <field name="email"/>
+                <filter string="Has Streak" name="has_streak" domain="[('current_eco_streak', '>', 0)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_res_users_eco_streak_leaderboard" model="ir.actions.act_window">
+        <field name="name">Employee Eco Leaderboard</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_res_users_eco_streak_list"/>
+        <field name="search_view_id" ref="view_res_users_eco_streak_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Track eco streaks, rewards, and leaderboard performance.</p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_esg_employee_eco_leaderboard"
+        name="Employee Eco Leaderboard"
+        parent="menu_ecosphere_root"
+        action="action_res_users_eco_streak_leaderboard"
+        sequence="60"/>
+
+</odoo>

@@ -135,6 +135,28 @@
     </record>
 
     <!-- Badge Views -->
+    <record id="view_res_users_form_inherit_eco_streak" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.eco.streak</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Eco Streak">
+                    <group>
+                        <field name="current_eco_streak"/>
+                        <field name="longest_eco_streak"/>
+                        <field name="last_green_activity_date"/>
+                        <field name="eco_points"/>
+                        <field name="next_reward_target"/>
+                        <field name="days_remaining_to_next_reward"/>
+                        <field name="next_reward_progress" widget="progressbar"/>
+                        <field name="awarded_streak_milestones"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_esg_badge_list" model="ir.ui.view">
         <field name="name">esg.badge.list</field>
         <field name="model">esg.badge</field>

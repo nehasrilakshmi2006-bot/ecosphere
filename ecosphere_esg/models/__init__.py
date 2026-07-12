@@ -6,5 +6,6 @@ from . import challenge_models
 from . import compliance
 from . import csr_activity
 from . import badge
+from . import employee_streak
 from . import policy_acknowledgement
 from . import res_config_settings

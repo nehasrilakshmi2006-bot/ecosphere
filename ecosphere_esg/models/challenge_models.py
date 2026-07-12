@@ -48,17 +48,22 @@ class EsgChallenge(models.Model):
             ('rejected', 'Rejected'),
         ],
         string='Approval Status',
-        default='draft',
+        default='approved',
         tracking=True,
     )
 
     def action_submit(self):
-        self.write({'approval_state': 'submitted'})
+        self.write({'approval_state': 'approved'})
 
     def action_approve(self):
         for challenge in self:
             challenge.write({'approval_state': 'approved'})
             challenge._notify_approval_decision(approved=True)
+            if challenge.employee_id:
+                challenge.employee_id._trigger_eco_streak_update(
+                    activity_date=fields.Date.today(),
+                    source_model=challenge._name,
+                )
 
     def action_reject(self):
         for challenge in self:

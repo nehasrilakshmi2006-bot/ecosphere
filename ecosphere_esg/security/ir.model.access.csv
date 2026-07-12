@@ -12,3 +12,4 @@ access_esg_report_wizard_user,esg.report.wizard.user,model_esg_report_wizard,bas
 access_esg_csr_activity_user,esg.csr.activity.user,model_esg_csr_activity,base.group_user,1,1,1,1
 access_esg_badge_user,esg.badge.user,model_esg_badge,base.group_user,1,1,1,1
 access_esg_policy_acknowledgement_user,esg.policy.acknowledgement.user,model_esg_policy_acknowledgement,base.group_user,1,1,1,1
+access_esg_streak_user,esg.streak.user,model_res_users,base.group_user,1,1,1,1
